@@ -78,7 +78,9 @@ app.get("/games/:id/ads", async (req, resp, next) => {
 	return resp.json(
 		ad.map((ad) => {
 			return {
-				...ad,
+				name: ad.name,
+				useVoiceChannel: ad.useVoiceChannel,
+				yearsPlaying: ad.yearsPlaying,
 				weekDays: ad.weekDays.split(","),
 				hourStart: ConvertMinutesForHours(ad.hourStart),
 				hourEnd: ConvertMinutesForHours(ad.hourEnd),
