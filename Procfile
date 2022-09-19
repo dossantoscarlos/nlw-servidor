@@ -1,1 +1,2 @@
-web: npx prima generate && npm run start
+web: npm run start
+release: npx prisma migrate deploy
