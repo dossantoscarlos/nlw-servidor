@@ -1,5 +1,5 @@
 import express from "express";
-import { PrismaClient, Ad, Prisma } from "@prisma/client";
+import { PrismaClient, Ad } from "@prisma/client";
 
 import { ConvertHoursForMinutes } from "./util/convert-hours-for-minutes";
 import { ConvertMinutesForHours } from "./util/convert-minutes-for-hours";
@@ -29,7 +29,7 @@ app.get("/games", async (req, resp, next) => {
 
 app.post("/game/:id/ads", async (req, resp, next) => {
 	const gameId: string = req.params.id;
-	const body: Ad = req.body;
+	const body = req.body;
 
 	const ad = await prisma.ad.create({
 		data: {
