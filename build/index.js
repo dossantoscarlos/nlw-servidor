@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,17 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import express from "express";
-import { PrismaClient } from "@prisma/client";
-import { ConvertHoursForMinutes } from "./util/convert-hours-for-minutes";
-import { ConvertMinutesForHours } from "./util/convert-minutes-for-hours";
-import cors from "cors";
-const app = express();
-const prisma = new PrismaClient({
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const client_1 = require("@prisma/client");
+const convert_hours_for_minutes_1 = require("./util/convert-hours-for-minutes");
+const convert_minutes_for_hours_1 = require("./util/convert-minutes-for-hours");
+const cors_1 = __importDefault(require("cors"));
+const app = (0, express_1.default)();
+const prisma = new client_1.PrismaClient({
     log: ["query"],
 });
-app.use(express.json());
-app.use(cors());
+app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 app.get("/games", (req, resp, next) => __awaiter(void 0, void 0, void 0, function* () {
     const games = yield prisma.game.findMany({
         include: {
@@ -34,7 +39,16 @@ app.post("/game/:id/ads", (req, resp, next) => __awaiter(void 0, void 0, void 0,
     const gameId = req.params.id;
     const body = req.body;
     const ad = yield prisma.ad.create({
-        data: Object.assign(Object.assign({}, body), { yearsPlaying: +body.yearsPlaying, weekDays: body.weekDays.toString(), hourStart: ConvertHoursForMinutes(body.hourStart.toString()), hourEnd: ConvertHoursForMinutes(body.hourEnd.toString()), gameId }),
+        data: {
+            name: body.name,
+            discord: body.discord,
+            useVoiceChannel: body.useVoiceChannel,
+            yearsPlaying: +body.yearsPlaying,
+            weekDays: body.weekDays.toString(),
+            hourStart: (0, convert_hours_for_minutes_1.ConvertHoursForMinutes)(body.hourStart.toString()),
+            hourEnd: (0, convert_hours_for_minutes_1.ConvertHoursForMinutes)(body.hourEnd.toString()),
+            gameId,
+        },
     });
     return resp.status(201).json({
         Ads: ad,
@@ -64,8 +78,15 @@ app.get("/games/:id/ads", (req, resp, next) => __awaiter(void 0, void 0, void 0,
             message: "Not Found",
         });
     }
-    return resp.json(ad.map((ad) => {
-        return Object.assign(Object.assign({}, ad), { weekDays: ad.weekDays.split(","), hourStart: ConvertMinutesForHours(ad.hourStart), hourEnd: ConvertMinutesForHours(ad.hourEnd) });
+    return resp.json(ad.map((arr) => {
+        return {
+            name: arr.name,
+            useVoiceChannel: arr.useVoiceChannel,
+            yearsPlaying: arr.yearsPlaying,
+            weekDays: arr.weekDays.split(","),
+            hourStart: (0, convert_minutes_for_hours_1.ConvertMinutesForHours)(arr.hourStart),
+            hourEnd: (0, convert_minutes_for_hours_1.ConvertMinutesForHours)(arr.hourEnd),
+        };
     }));
 }));
 app.get("/ads/:id/discord", (req, resp, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -87,4 +108,7 @@ app.get("/ads/:id/discord", (req, resp, next) => __awaiter(void 0, void 0, void 
         discord: ad.discord,
     });
 }));
-app.listen(3333);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.info("Servidor iniciou com sucesso!!!");
+});
