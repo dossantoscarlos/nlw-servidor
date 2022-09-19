@@ -1,1 +1,1 @@
-web: npm run start
+web: npx prima generate && npm run start
