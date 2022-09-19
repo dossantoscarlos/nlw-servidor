@@ -124,7 +124,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsnd --exit-child ./src/index.ts"
+    "dev": "tsnd --exit-child ./src/index.ts",
+    "start": "node ./src/index.js"
   },
   "author": "",
   "license": "ISC"
