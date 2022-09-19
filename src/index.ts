@@ -76,16 +76,25 @@ app.get("/games/:id/ads", async (req, resp, next) => {
 	}
 
 	return resp.json(
-		ad.map((ad) => {
-			return {
-				name: ad.name,
-				useVoiceChannel: ad.useVoiceChannel,
-				yearsPlaying: ad.yearsPlaying,
-				weekDays: ad.weekDays.split(","),
-				hourStart: ConvertMinutesForHours(ad.hourStart),
-				hourEnd: ConvertMinutesForHours(ad.hourEnd),
-			};
-		})
+		ad.map(
+			(arr: {
+				name: any;
+				useVoiceChannel: any;
+				yearsPlaying: any;
+				weekDays: string;
+				hourStart: number;
+				hourEnd: number;
+			}) => {
+				return {
+					name: arr.name,
+					useVoiceChannel: arr.useVoiceChannel,
+					yearsPlaying: arr.yearsPlaying,
+					weekDays: arr.weekDays.split(","),
+					hourStart: ConvertMinutesForHours(arr.hourStart),
+					hourEnd: ConvertMinutesForHours(arr.hourEnd),
+				};
+			}
+		)
 	);
 });
 
